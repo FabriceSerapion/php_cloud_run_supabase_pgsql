@@ -6,8 +6,7 @@
 - have PHP installed and in your `PATH`
 - have a standard install of Docker Desktop
 - have the [`gcloud` CLI](https://cloud.google.com/sdk/docs/install-sdk) installed on your machine
-- `sudo apt update && sudo apt upgrade`
-- `sudo apt autoremove`
+- `sudo apt update && sudo apt upgrade && sudo apt autoremove`
 - `gcloud components update`
 
 ## steps
@@ -51,7 +50,6 @@
 - GCP APIs that must be enabled in your project (you can do this from your GCP browser console) =>
   - `Artifact Registry API`
   - `Cloud Build API`
-  - `Cloud Build API`
   - `Compute Engine API`
   - `Container Analysis API`
 - [connect your GCP identity/repo to GitHub](https://cloud.google.com/build/docs/automating-builds/github/connect-repo-github)
@@ -62,7 +60,7 @@
 - authenticate your local Docker install to Artifact Registry => `gcloud auth configure-docker europe-west6-docker.pkg.dev`
 - create a Docker repository in the artifact registry, give it the previously set region, it's a good practice to set labels on Cloud resources, let's call it `tests`
 - build and tag the relevant Docker image locally, replacing the placeholders (replace `PROJECT_ID` with your project id) => `docker build -t europe-west6-docker.pkg.dev/PROJECT_ID/REGISTRY_REPO_NAME/IMAGE_NAME:vx.x.x .`
-- check that the container works properly on port 80 locally => `docker run europe-west6-docker.pkg.dev/PROJECT_ID/REGISTRY_REPO_NAME/IMAGE_NAME:vx.x.x -p 80:80`
+- check that the container works properly on port 80 locally => `docker run -p 80:80 europe-west6-docker.pkg.dev/PROJECT_ID/REGISTRY_REPO_NAME/IMAGE_NAME:vx.x.x`
 - push the images to the Artifact Registry, replacing the placeholders => `docker push europe-west6-docker.pkg.dev/PROJECT_ID/REGISTRY_REPO_NAME/IMAGE_NAME:vx.x.x`
 - deploy your app' for the first time ! replacing the placeholders => `gcloud run deploy mytestservice --image=europe-west6-docker.pkg.dev/PROJECT_ID/REGISTRY_REPO_NAME/IMAGE_NAME:vx.x.x --port=80 --region=europe-west6 --allow-unauthenticated`
 - when app' deployed, the wizard should reveal the service URL that you can visit in your browser !
@@ -72,7 +70,7 @@
 - then, edit the continuous deployment
   - to run the build trigger on tagging the main branch; tags must follow the pattern `^v(\d+)\.(\d+)\.(\d+)$`
   - to detect a `cloudbuild.yaml` file
-- to push a tag => `git tag vx.x.x && git push origin vx.x.x` => see another revision of your service deployed automatically
+- to push a tag (after having committed of course) => `git tag vx.x.x && git push origin vx.x.x` => see another revision of your service deployed automatically
 - try pushing a new tag again, see your app' working
 
 ## to go further
@@ -81,6 +79,7 @@
 - add tests
   - unit
   - integration with a dockerized local db
+- use SSL to connect to the DB
 - use connection pooling to connect to db for better performance
 - create a staging environment
 - map a custom domain to your GCP Cloud Run service (create another Artifact repo + image in another region if your current region does not support domain mappings)

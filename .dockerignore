@@ -1,2 +1,4 @@
 vendor
 .git
+
+# you could put whatever you dont need in prod in here (for instance, fixtures)

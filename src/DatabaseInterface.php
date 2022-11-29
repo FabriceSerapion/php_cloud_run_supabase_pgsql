@@ -10,4 +10,6 @@ interface DatabaseInterface {
 
     public function getConnection(): ?PDO;
 
+    public function setConnection(): static;
+
 }
